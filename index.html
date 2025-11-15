@@ -105,7 +105,7 @@
             </audio>
             <div class="slideshow">
                 <div class="slide active">
-                    <video class="slide-media" controls autoplay muted>
+                    <video class="slide-media" playsinline muted loop>
                         <source src="images/hansi1.mp4" type="video/mp4">
                         <source src="images/hansi1.webm" type="video/webm">
                         Your browser does not support the video tag.
@@ -113,7 +113,7 @@
                     <img class="slide-media" src="images/hansi1.jpg" alt="Hansi 1" style="display:none;">
                 </div>
                 <div class="slide">
-                    <video class="slide-media" controls autoplay muted>
+                    <video class="slide-media" playsinline muted loop>
                         <source src="images/hansi2.mp4" type="video/mp4">
                         <source src="images/hansi2.webm" type="video/webm">
                         Your browser does not support the video tag.
@@ -121,7 +121,7 @@
                     <img class="slide-media" src="images/hansi2.jpg" alt="Hansi 2" style="display:none;">
                 </div>
                 <div class="slide">
-                    <video class="slide-media" controls autoplay muted>
+                    <video class="slide-media" playsinline muted loop>
                         <source src="images/hansi3.mp4" type="video/mp4">
                         <source src="images/hansi3.webm" type="video/webm">
                         Your browser does not support the video tag.
@@ -129,7 +129,7 @@
                     <img class="slide-media" src="images/hansi3.jpg" alt="Hansi 3" style="display:none;">
                 </div>
                 <div class="slide">
-                    <video class="slide-media" controls autoplay muted>
+                    <video class="slide-media" playsinline muted loop>
                         <source src="images/hansi4.mp4" type="video/mp4">
                         <source src="images/hansi4.webm" type="video/webm">
                         Your browser does not support the video tag.
@@ -137,13 +137,19 @@
                     <img class="slide-media" src="images/hansi4.jpg" alt="Hansi 4" style="display:none;">
                 </div>
                 <div class="slide">
-                    <video class="slide-media" controls autoplay muted>
+                    <video class="slide-media" playsinline muted loop>
                         <source src="images/hansi5.mp4" type="video/mp4">
                         <source src="images/hansi5.webm" type="video/webm">
                         Your browser does not support the video tag.
                     </video>
                     <img class="slide-media" src="images/hansi5.jpg" alt="Hansi 5" style="display:none;">
                 </div>
+            </div>
+            <div class="video-play-overlay" id="video-play-overlay">
+                <button class="play-button" onclick="startVideos()">
+                    <span class="play-icon">▶️</span>
+                    <span class="play-text">Tap to Play Videos</span>
+                </button>
             </div>
             <div class="letter-book">
                 <div class="book-pages">

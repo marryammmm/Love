@@ -8,6 +8,7 @@ let gameStarted = false;
 let currentSlide = 0;
 let passwordValue = '';
 let currentBookPage = 0;
+let videosStarted = false;
 
 // Card emojis for the matching game
 const cardEmojis = ['💗', '💖', '💝', '💕', '💓', '💞'];
@@ -266,8 +267,26 @@ function showGallery() {
     modal.classList.add('active');
     currentSlide = 0;
     currentBookPage = 0; // Reset book page
+    videosStarted = false; // Reset video status
     showSlide(currentSlide);
     updatePageIndicator(); // Update page indicator
+    
+    // Show play overlay for iOS
+    const overlay = document.getElementById('video-play-overlay');
+    if (overlay) {
+        // Check if we need to show overlay (for iOS/Safari)
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        
+        if (isIOS || isSafari) {
+            setTimeout(() => {
+                overlay.classList.add('show');
+            }, 300);
+        } else {
+            // Auto-start for other browsers
+            startVideos();
+        }
+    }
     
     // Play background music with user interaction
     setTimeout(() => {
@@ -286,9 +305,38 @@ function showGallery() {
     
     // Setup video event listeners for autoplay and auto-advance
     setupVideoAutoplay();
+}
+
+// Start videos function for iOS
+function startVideos() {
+    const overlay = document.getElementById('video-play-overlay');
+    if (overlay) {
+        overlay.classList.remove('show');
+    }
     
-    // Don't start auto slideshow - let videos control the timing
-    // startAutoSlideshow();
+    videosStarted = true;
+    
+    // Start playing the first video
+    const activeSlide = document.querySelector('.slide.active');
+    if (activeSlide) {
+        const video = activeSlide.querySelector('video');
+        if (video) {
+            video.muted = true; // Keep muted for iOS
+            video.play().catch(error => {
+                console.log('Video play error:', error);
+            });
+        }
+    }
+    
+    // Start background music
+    const galleryMusic = document.getElementById('gallery-music');
+    if (galleryMusic && galleryMusic.paused) {
+        galleryMusic.currentTime = 11;
+        galleryMusic.volume = 0.5;
+        galleryMusic.play().catch(error => {
+            console.log('Music play error:', error);
+        });
+    }
 }
 
 // Show Music Modal
@@ -323,6 +371,14 @@ function closeModal(modalId) {
             // Remove event listeners
             video.removeEventListener('ended', handleVideoEnd);
         });
+        
+        // Hide overlay
+        const overlay = document.getElementById('video-play-overlay');
+        if (overlay) {
+            overlay.classList.remove('show');
+        }
+        
+        videosStarted = false;
         stopAutoSlideshow();
     }
     
@@ -359,16 +415,24 @@ function showSlide(n) {
     
     slides[currentSlide].classList.add('active');
     
-    // Play the active video
-    const activeSlide = slides[currentSlide];
-    const activeVideo = activeSlide.querySelector('video');
-    if (activeVideo) {
-        activeVideo.currentTime = 0;
-        const playPromise = activeVideo.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                console.log('Video autoplay prevented:', error);
-            });
+    // Play the active video if videos have been started
+    if (videosStarted) {
+        const activeSlide = slides[currentSlide];
+        const activeVideo = activeSlide.querySelector('video');
+        if (activeVideo) {
+            activeVideo.currentTime = 0;
+            activeVideo.muted = true; // Ensure muted for iOS
+            const playPromise = activeVideo.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log('Video autoplay prevented:', error);
+                    // Show overlay again if autoplay fails
+                    const overlay = document.getElementById('video-play-overlay');
+                    if (overlay) {
+                        overlay.classList.add('show');
+                    }
+                });
+            }
         }
     }
 }
